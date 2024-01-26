@@ -8,7 +8,7 @@ is valid attribute.
 gen_initial_state(problem,parameters,information,options,status::State{Any}) = gen_initial_state(problem,parameters,information,options)
 
 
-function gen_initial_state(problem,parameters,information,options, status)
+function gen_initial_state(problem, parameters, information, options, status)
     if parameters.N != length(status.population)
         options.debug && @warn("Population size in provided State differs from that in parameters")
     end
@@ -16,7 +16,7 @@ function gen_initial_state(problem,parameters,information,options, status)
     getdim(problem) != length(get_position(status.best_sol)) &&
         error("Invalid population (dimension does not match with bounds)")
 
-    _complete_population!(status,problem,parameters,information,options)
+    _complete_population!(status, problem, parameters, information, options)
 
     best_solution = get_best(status.population)
     # check if a better solution was found
@@ -27,7 +27,7 @@ function gen_initial_state(problem,parameters,information,options, status)
     return State(best_solution, status.population;f_calls = length(status.population))
 end
 
-function gen_initial_state(problem,parameters,information,options)
+function gen_initial_state(problem, parameters, information, options)
     # population array
     population = generate_population(parameters.N, problem, options.rng,ε=options.h_tol)
 
@@ -38,7 +38,7 @@ function gen_initial_state(problem,parameters,information,options)
 end
 
 
-function _complete_population!(status,problem,parameters,information,options)
+function _complete_population!(status, problem, parameters, information, options)
     if parameters.N < length(status.population)
         # increase population if necessary
         parameters.N = length(status.population)
@@ -54,6 +54,5 @@ function _complete_population!(status,problem,parameters,information,options)
         # insert new solution into population
         append!(status.population, missing_sols)
     end
-    
 end
 

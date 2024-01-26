@@ -8,7 +8,8 @@ end
 
 function Algorithm(
         parameters;
-        initial_state::State = State(nothing, []),
+        population = [],
+        initial_state::State = State(nothing, population),
         information::Information = Information(),
         options::Options = Options(),
         termination = Termination(),
