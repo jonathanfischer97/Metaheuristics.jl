@@ -22,8 +22,8 @@ function crossover(population, parameters::SBX)
         p1 = get_position(population[i])
         p2 = get_position(population[i+1])
         c1, c2 = SBX_crossover(p1, p2, bounds, parameters.η, parameters.p, rng)
-        Q[i,:] = c1
-        Q[i+1,:] = c2
+        Q[:,i] .= c1
+        Q[:,i+1] .= c2
     end
     Q
 end

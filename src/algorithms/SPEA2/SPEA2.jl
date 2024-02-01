@@ -150,7 +150,7 @@ function compute_fitness(population, Distance = pairwise_distances(population))
     S = sum(dominate,dims=2)[:,1]
     R = [ sum(S[dominate[:,i]]) for i in 1:N]
 
-    distance = sort(Distance,dims=2)
+    distance = sort(Distance,dims=1)
 
 
     D = 1 ./ (distance[:,floor(Int,sqrt(N))] .+ 2)

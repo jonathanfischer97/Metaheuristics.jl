@@ -12,14 +12,14 @@ end
 
 function _mat_to_bounds(bounds::AbstractMatrix)
     # validate bounds in cols
-    if size(bounds, 1) > 2 && size(bounds, 2) == 2
+    if size(bounds, 2) > 2 && size(bounds, 1) == 2
         bounds = bounds'
-    elseif size(bounds, 1) != 2
+    elseif size(bounds, 2) != 2
         error("Provide valid bounds. Suggestion: set `bounds = BoxConstrainedSpace(lb, ub)`.")
     end
     
-    lb = bounds[1,:]
-    ub = bounds[2,:]
+    lb = bounds[:,1]
+    ub = bounds[:,2]
     BoxConstrainedSpace(lb, ub)
 end
 _mat_to_bounds(space::AbstractSearchSpace) =  space

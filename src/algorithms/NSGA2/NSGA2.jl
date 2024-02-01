@@ -266,7 +266,7 @@ function reproduction(status, parameters::AbstractNSGA, problem, options)
     @assert !isempty(status.population)
 
     N_half = parameters.N
-    Q = zeros(2N_half, getdim(problem))
+    Q = zeros(getdim(problem), 2N_half)
 
     for i in 1:N_half
         pa = tournament_selection(status.population, options)
@@ -280,8 +280,8 @@ function reproduction(status, parameters::AbstractNSGA, problem, options)
                                  η_m = parameters.η_m,
                                  p_m = parameters.p_m,
                                  options.rng)
-        Q[2i-1,:] = c1
-        Q[2i,:] = c2
+        Q[:,2i-1] = c1
+        Q[:,2i] = c2
     end
 
     Q

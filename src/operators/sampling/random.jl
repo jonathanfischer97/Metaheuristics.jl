@@ -36,9 +36,9 @@ struct RandomPermutation <: AbstractInitializer
     RandomPermutation(;N = 0) = new(N)
 end
 
-function gen_initial_state(problem,parameters::RandomPermutation,information,options)
+function gen_initial_state(problem, parameters::RandomPermutation, information, options)
 
-    D = getdim(problem)
+    # D = getdim(problem)
     N = parameters.N
 
     if problem.search_space isa BoxConstrainedSpace
@@ -52,10 +52,10 @@ function gen_initial_state(problem,parameters::RandomPermutation,information,opt
     if problem.parallel_evaluation
         population = create_solutions(X, problem; ε=options.h_tol)
     else
-        population = [ create_solution(X[i,:], problem; ε=options.h_tol) for i in 1:N]
+        population = [ create_solution(X[:, i], problem; ε=options.h_tol) for i in 1:N]
     end 
 
     best_solution = get_best(population)
 
-    State(best_solution, population; f_calls = length(population), iteration=1)
+    State(best_solution, population; f_calls = size(population, 2), iteration=1)
 end

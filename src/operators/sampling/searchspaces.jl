@@ -4,8 +4,8 @@ function sample(
     ) where {M <: RandomSampler, S <: AtomicSearchSpace}
 
     X = rand(sampler.method.rng, sampler.searchspace, n)
-    # convert to matrix
-    [X[i][j] for i in eachindex(X), j in eachindex(first(X))]
+    # convert to column matrix
+    [X[j][i] for i in eachindex(X), j in eachindex(first(X))]
 end
 
 
@@ -15,7 +15,7 @@ function sample(
 
     X = collect(sampler)
     # convert to matrix
-    [X[i][j] for i in eachindex(X), j in eachindex(first(X))]
+    [X[j][i] for i in eachindex(X), j in eachindex(first(X))]
 end
 
 function sample(

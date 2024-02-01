@@ -141,7 +141,7 @@ function initialize!(
     options.f_calls_limit = options.f_calls_limit == 0 ? options.iterations * N : options.f_calls_limit
 
     # Velocity
-    parameters.V = isempty(parameters.V) ? zeros(N,D) : parameters.V
+    parameters.V = isempty(parameters.V) ? zeros(D,N) : parameters.V
     # Postions
     parameters.X = isempty(parameters.X) ? positions(status) : parameters.X
     # function values
@@ -207,9 +207,9 @@ function update_state!(
     #
     # Checking allowable range. 
     # X = correctPop(X, low, up)
-    for i = 1:N
-        x = reset_to_violated_bounds!(X[i,:], problem.search_space)
-        X[i,:] = x
+    for ind in eachcol(X)
+        x = reset_to_violated_bounds!(ind, problem.search_space)
+        ind .= x
     end
 
     status.population = create_solutions(X, problem)

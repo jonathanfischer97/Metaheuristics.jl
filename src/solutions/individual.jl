@@ -160,8 +160,8 @@ end
 ##########################################################3
 # single objective
 function create_child(X::AbstractMatrix, fResult::AbstractVector;ε=0.0)
-    size(X,1) != length(fResult) && error("Error in parallel evaluation: size(X,2) != length(f(X))")
-    return [xf_solution(X[i,:], fResult[i]) for i in 1:size(X,1)]
+    size(X,2) != length(fResult) && error("Error in parallel evaluation: size(X,2) != length(f(X))")
+    return [xf_solution(X[:,i], fResult[i]) for i in axes(X,2)]
 end
 
 
@@ -169,9 +169,9 @@ end
 function create_child(X::AbstractMatrix, fResult::AbstractMatrix;ε=0.0)
     size(fResult,2) > 1 && (return create_child(X, (fResult, zeros(0,0), zeros(0,0))))
 
-    size(X,1) != size(fResult,1) && error("Error in parallel evaluation: size(X,2) != length(f(X))") 
+    size(X,2) != size(fResult,1) && error("Error in parallel evaluation: size(X,2) != length(f(X))") 
 
-    return [xf_solution(X[i,:], fResult[i]) for i in 1:size(X,1)]
+    return [xf_solution(X[:,i], fResult[i]) for i in axes(X,2)]
 end
 
 # constrained single objective
@@ -182,18 +182,18 @@ function create_child(X::AbstractMatrix,
 
     F, G, H = fResult
 
-    size_ok = size(X,1) == length(F) #&& size(X,1) == size(G,1) && size(X,1) == size(H,1)
+    size_ok = size(X,2) == length(F) #&& size(X,1) == size(G,1) && size(X,1) == size(H,1)
     !size_ok && error("Error in parallel evaluation: Size of X, F(X),G(X) or H(X) differs.")
 
-    @assert isempty(G) || !isempty(G) && size(X,1) == size(G,1)
-    @assert isempty(H) || !isempty(H) && size(X,1) == size(H,1)
+    @assert isempty(G) || !isempty(G) && size(X,2) == size(G,1)
+    @assert isempty(H) || !isempty(H) && size(X,2) == size(H,1)
 
     population = xfgh_indiv[]
 
-    for i in 1:size(X,1)
+    for i in axes(X,2)
         g = isempty(G) ? zeros(0) : G[i,:]
         h = isempty(H) ? zeros(0) : H[i,:]
-        push!(population, xfgh_indiv(X[i,:], F[i], g, h;ε=ε))
+        push!(population, xfgh_indiv(X[:,i], F[i], g, h;ε=ε))
     end
     population
 end
@@ -209,19 +209,19 @@ function create_child(X::AbstractMatrix,
     # single-objective
     size(F,2) == 1 && (return create_child(X, (F[:,1], G, H)))
 
-    @assert size(X,1) == size(F,1)
-    @assert isempty(G) || !isempty(G) && size(X,1) == size(G,1)
-    @assert isempty(H) || !isempty(H) && size(X,1) == size(H,1)
+    @assert size(X,2) == size(F,1)
+    @assert isempty(G) || !isempty(G) && size(X,2) == size(G,1)
+    @assert isempty(H) || !isempty(H) && size(X,2) == size(H,1)
     # !size_ok && error("Error in parallel evaluation: size(X,1) != size(F(X),1).")
     #&& error("Error in parallel evaluation: size(X,1) != size(G(X),1).")
     #&& error("Error in parallel evaluation: size(X,1) != size(H(X),1).")
 
     population = xFgh_indiv[]
 
-    for i in 1:size(X,1)
+    for i in axes(X,2)
         g = isempty(G) ? zeros(0) : G[i,:]
         h = isempty(H) ? zeros(0) : H[i,:]
-        push!(population, xFgh_indiv(X[i,:], F[i,:], g, h;ε=ε))
+        push!(population, xFgh_indiv(X[:,i], F[i,:], g, h;ε=ε))
     end
     population
 end
@@ -248,7 +248,7 @@ end
 @inline _num_to_vec(v::Number) = [v]
 @inline _num_to_vec(v::AbstractArray) = v
 
-function generate_population(N::Int, problem, rng = default_rng_mh();ε=0.0, parallel_evaluation = false)
+function generate_population(N::Int, problem, rng = default_rng_mh();ε=0.0)
 
     space = problem.search_space
 
@@ -322,11 +322,11 @@ end
 
 function create_solutions(X::AbstractMatrix, problem::Problem; ε=0.0)
     if problem.parallel_evaluation
-        problem.f_calls += size(X,1)
+        problem.f_calls += size(X,2)
         # FIXME: fix type of X
         return create_child(X, problem.f(X), ε=ε)
     end
-    [create_solution(X[i,:], problem, ε=ε) for i in 1:size(X,1)]
+    [create_solution(X[:,i], problem, ε=ε) for i in axes(X,2)]
 end
 
 # getters for the above structures
@@ -343,8 +343,9 @@ function positions(population::AbstractArray)
         zeros(0,0)
     end
 
-    D = length(get_position(population[1]))
-    [ get_position(sol)[i] for sol in population, i in 1:D]
+    # D = length(get_position(population[1]))
+    # [ get_position(sol)[i] for sol in population, i in 1:D]
+    stack(get_position(sol) for sol in population)
 end
 """
     fval(solution)

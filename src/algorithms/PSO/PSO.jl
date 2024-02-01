@@ -75,16 +75,16 @@ function update_state!(
     )
     xGBest = get_position(status.best_sol)
 
-    X_new = zeros(parameters.N, getdim(problem))
+    X_new = zeros(getdim(problem), parameters.N)
 
     # For each elements in population
     for i in 1:parameters.N
         x = get_position(parameters.flock[i])
         xPBest = get_position(status.population[i])
-        parameters.v[i, :] = velocity(x, parameters.v[i, :], xPBest, xGBest, parameters, options.rng)
-        x += parameters.v[i, :]
+        parameters.v[:, i] = velocity(x, parameters.v[:, i], xPBest, xGBest, parameters, options.rng)
+        x += parameters.v[:, i]
         reset_to_violated_bounds!(x, problem.search_space)
-        X_new[i,:] = x
+        X_new[:,i] = x
     end
 
     for (i, sol) in enumerate(create_solutions(X_new, problem;ε = options.h_tol))
@@ -135,7 +135,7 @@ function initialize!(
 
     status = gen_initial_state(problem,parameters,information,options,status)
 
-    parameters.v = zeros(parameters.N, D)
+    parameters.v = zeros(D, parameters.N)
 
 
 

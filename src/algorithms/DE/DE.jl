@@ -196,14 +196,14 @@ function reproduction(status, parameters::AbstractDifferentialEvolution, problem
     F = parameters.F
     CR = parameters.CR
 
-    X = zeros(eltype(xBest), N, D)
+    X = zeros(eltype(xBest), D, N)
 
     for i in 1:N
         x = get_position(population[i])
         u = DE_mutation(population, F, strategy, 1)
         v = DE_crossover(x, u, CR)
         evo_boundary_repairer!(v, xBest, problem.search_space)
-        X[i,:] .= _fix_type(v, problem.search_space)
+        X[:,i] .= _fix_type(v, problem.search_space)
     end
 
     X 
