@@ -5,7 +5,8 @@ function sample(
 
     X = rand(sampler.method.rng, sampler.searchspace, n)
     # convert to column matrix
-    [X[j][i] for i in eachindex(X), j in eachindex(first(X))]
+    # [X[j][i] for i in eachindex(X), j in eachindex(first(X))]
+    stack(X)
 end
 
 
@@ -15,7 +16,8 @@ function sample(
 
     X = collect(sampler)
     # convert to matrix
-    [X[j][i] for i in eachindex(X), j in eachindex(first(X))]
+    # [X[j][i] for i in eachindex(X), j in eachindex(first(X))]
+    stack(X)
 end
 
 function sample(

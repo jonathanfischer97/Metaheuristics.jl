@@ -24,8 +24,8 @@ function mutation!(Q, parameters::PolynomialMutation)
     η = parameters.η
     p = parameters.p
     rng = parameters.rng
-    for i in 1:size(Q,1)
-        polynomial_mutation!(view(Q, i,:), bounds, η, p, rng)
+    for ind in eachcol(Q)
+        polynomial_mutation!(ind, bounds, η, p, rng)
     end
     Q
 end

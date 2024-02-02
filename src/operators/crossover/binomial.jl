@@ -11,17 +11,17 @@ end
 function crossover(population, c::BinomialCrossover)
     Q = positions(population)
 
-    Q1 = Q[1:2:end-1, :]
-    Q2 = Q[2:2:end,   :]
+    Q1 = Q[:, 1:2:end-1]
+    Q2 = Q[:, 2:2:end]
 
-    mask = rand(c.rng, size(Q,1)÷2, size(Q, 2)) .<= c.p
+    mask = rand(c.rng, size(Q,2)÷2, size(Q, 1)) .<= c.p
     Q1[mask] = Q2[mask]
 
     if c.n_offsprings > 2
         return Q1
     end
 
-    Q1 = Q[1:2:end-1, :]
+    Q1 = Q[:, 1:2:end-1]
     Q2[mask] = Q1[mask]
     return vcat(Q1, Q2)
 end
